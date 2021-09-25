@@ -1,0 +1,26 @@
+body {
+	background-color: #212529;
+	color: #fefbf3;
+}
+
+.preview-container {
+	height: 100%;
+}
+.left-nav {
+	height: 100%;
+	padding: 25px;
+	display: none;
+}
+.map-img {
+	height: 100%;
+	width: auto;
+}
+.left-nav-buttons {
+	margin-top: 25px;
+	font-size: 1.3rem;
+}
+.cancel-icon-left-nav {
+	width: 0;
+	margin-right: 0;
+	margin-left: auto;
+}
