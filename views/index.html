@@ -43,6 +43,14 @@
 			href="https://api.mapbox.com/mapbox-gl-js/v2.4.1/mapbox-gl.css"
 			rel="stylesheet"
 		/>
+		<!-- Geocoder script -->
+		<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.min.js"></script>
+		<!-- Geocoder css -->
+		<link
+			rel="stylesheet"
+			href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.css"
+			type="text/css"
+		/>
 		<title>Rise and Optimize</title>
 	</head>
 	<body style="margin: 0; padding: 0">
@@ -51,7 +59,7 @@
 			<div class="navbar navbar-expand-lg navbar-dark bg-dark">
 				<a class="navbar-brand" style="cursor: default">
 					<button
-						class="left-nav-togglers"
+						class="slide-right"
 						style="
 							color: rgba(254, 251, 243, 0.55);
 							border-color: transparent;
@@ -64,8 +72,9 @@
 						src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/NASA_logo.svg/2449px-NASA_logo.svg.png"
 						alt="NASA-logo"
 						style="height: 50px; width: auto"
+						class="NASA-img"
 					/>
-					NASA</a
+					<span class="NASA-img">NASA</span></a
 				>
 				<button
 					class="navbar-toggler"
@@ -96,7 +105,7 @@
 					aria-orientation="vertical"
 				>
 					<button
-						class="cancel-icon-left-nav left-nav-togglers"
+						class="cancel-icon-left-nav slide-left"
 						style="
 							border-color: transparent;
 							background-color: transparent;
@@ -172,15 +181,17 @@
 					aria-labelledby="pills-map1-tab"
 				>
 					<div
-						id="map"
+						id="3dmap"
 						style="
 							position: absolute;
 							top: 0;
 							bottom: 0;
 							width: 100%;
 							z-index: -1;
+							margin-top: 85px;
 						"
 					></div>
+					<div id="geocoder" class="geocoder"></div>
 				</div>
 				<div
 					class="tab-pane fade"
@@ -208,69 +219,13 @@
 				</div>
 			</div>
 		</nav>
+		<style>
+			.mapboxgl-ctrl-geocoder {
+				min-width: 100%;
+			}
+		</style>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-		<script>
-			mapboxgl.accessToken =
-				"pk.eyJ1IjoiYWxpLWFnaCIsImEiOiJja3U0OWJlNW4weDgwMzFvNmhsY2dhMWZ0In0._9bFwcY83fo_G3G2EuI8xw";
-			const map = new mapboxgl.Map({
-				style: "mapbox://styles/mapbox/light-v10",
-				center: [-73.935242, 40.73061],
-				zoom: 15.5,
-				pitch: 45,
-				bearing: -17.6,
-				container: "map",
-				antialias: true,
-			});
-			map.addControl(new mapboxgl.NavigationControl());
-			map.on("load", () => {
-				// Insert the layer beneath any symbol layer.
-				const layers = map.getStyle().layers;
-				const labelLayerId = layers.find(
-					(layer) => layer.type === "symbol" && layer.layout["text-field"]
-				).id;
-
-				// The 'building' layer in the Mapbox Streets
-				// vector tileset contains building height data
-				// from OpenStreetMap.
-				map.addLayer(
-					{
-						id: "add-3d-buildings",
-						source: "composite",
-						"source-layer": "building",
-						filter: ["==", "extrude", "true"],
-						type: "fill-extrusion",
-						minzoom: 15,
-						paint: {
-							"fill-extrusion-color": "#aaa",
-
-							// Use an 'interpolate' expression to
-							// add a smooth transition effect to
-							// the buildings as the user zooms in.
-							"fill-extrusion-height": [
-								"interpolate",
-								["linear"],
-								["zoom"],
-								15,
-								0,
-								15.05,
-								["get", "height"],
-							],
-							"fill-extrusion-base": [
-								"interpolate",
-								["linear"],
-								["zoom"],
-								15,
-								0,
-								15.05,
-								["get", "min_height"],
-							],
-							"fill-extrusion-opacity": 0.6,
-						},
-					},
-					labelLayerId
-				);
-			});
-		</script>
+		<script src="/javascripts/3dmap.js"></script>
 		<script src="/javascripts/index.js" charset="UTF-8"></script>
 	</body>
 </html>
