@@ -3,12 +3,13 @@ var express = require('express');
 var path = require('path');
 // var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const upload = require("express-fileupload");
 
 // var indexRouter = require('./routes/index');
 // var usersRouter = require('./routes/users');
 
 var app = express();
-
+app.use(upload());
 // view engine setup
 // app.set('views', path.join(__dirname, 'views'));
 // app.set('view engine', 'jade');
@@ -43,6 +44,30 @@ module.exports = app;
 app.get('/', function(req, res) {
   res.sendFile(__dirname + "/views/index.html");
 });
+
+app.get("/upload", function (req, res) {
+  res.sendFile(__dirname + "/views/geojson.html");
+});
+
+app.post("/upload", (req, res) => {
+  if(req.files){
+      // console.log(req.files);
+      var file = req.files.geojsonFile;
+      var fileName = file.name;
+      // console.log(fileName);
+      
+      file.mv("./uploads/" + fileName, function(err) {
+          if(err){
+              res.send(err);
+          } else {
+              res.send("File Uploaded.");
+          }
+      })
+  };
+  
+});
+
+
 
 app.listen(3000, function() {
   console.log("Running on port 3000");
