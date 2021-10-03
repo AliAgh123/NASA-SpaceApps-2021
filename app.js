@@ -49,26 +49,6 @@ app.get("/upload", function (req, res) {
   res.sendFile(__dirname + "/views/geojson.html");
 });
 
-app.post("/upload", (req, res) => {
-  if(req.files){
-      // console.log(req.files);
-      var file = req.files.geojsonFile;
-      var fileName = file.name;
-      // console.log(fileName);
-      
-      file.mv("./uploads/" + fileName, function(err) {
-          if(err){
-              res.send(err);
-          } else {
-              res.send("File Uploaded.");
-          }
-      })
-  };
-  
-});
-
-
-
 app.listen(3000, function() {
   console.log("Running on port 3000");
 });

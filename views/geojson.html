@@ -73,10 +73,11 @@
 		</div>
 		<h1 style="padding: 20px">geojson file Upload</h1>
 		<form
-			action="/upload"
+		    action=""
 			method="POST"
 			enctype="multipart/form-data"
 			style="padding: 5px 20px"
+			onsubmit="createMap()"
 		>
 			<input
 				type="file"
@@ -108,6 +109,60 @@
 					fileInput.value = "";
 					return false;
 				}
+			}
+			function createMap() {
+				var outPutJson = {};
+				var file = document.getElementById("geojsonfile"),
+				fr = new FileReader();
+				fr.onload = () => {
+					var sanitized_result = fr.result.split('base64,')[1];
+					var decoded_result = atob(sanitized_result);
+					var result = JSON.parse(decoded_result);
+					var feature_result = result.features;
+					Object.assign(outPutJson, result.type);
+					for(let i = 0; i < result.length; i++){
+						var obj = feature_result[i];
+						var Osensitivity = obj.properties.sensitivity;
+						if(Osensitivity == null){
+							alert("wrong file format");
+							return;
+						}
+						var sensitivity = 0, 
+						d = 0;
+						for(let key in Osensitivity){
+							sensitivity += Osensitivity[key].value;
+							d++;
+						}
+						sensitivity = sensitivity / d;
+						var OExposure = obj.properties.exposure;
+						if(OExposure == null){
+							alert("Wrong file format")
+						}
+						var exposure = 0;
+						s = 0;
+						for(let key in OExposure){
+							exposure += OExposure[key].value;
+							s++;
+						}
+						exposure = exposure / s;
+						var OAc = obj.properties.ac;
+						var m = 0,
+						Ac = 0;
+						for(let key in OAc){
+							Ac += OAc[key].value;
+							m++;
+						}
+						Ac = Ac/m;
+					
+						var V = sensitivity - Ac;
+
+						var R = V*exposure;
+						Object.assign(obj, {"risk": {R}});
+						Object.assign(outPutJson, {i:{obj}})
+					}
+					console.log(outPutJson);
+				}
+				fr.readAsDataURL(file.files[0]);
 			}
 		</script>
 	</body>
